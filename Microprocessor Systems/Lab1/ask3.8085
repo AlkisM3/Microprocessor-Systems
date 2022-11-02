@@ -1,0 +1,30 @@
+START:
+	MVI B,00H
+	LDA 2000H
+
+EKATO:
+	CPI 64H    ; Compare with 100
+	JC DECA    ; if smaller than 100 Jump
+	SUI 64H    ; else subtract 100 and check again
+	JMP EKATO
+
+DECA:
+	CPI 0AH    ; Compare with 10
+	JC ONE     ; if smaller than 10 kane jump 
+	SUI 0AH    ; else subtract 10, calculate the decade and check again
+	INR B
+	JMP DECA
+
+ONE:
+	MOV C,A    ; now monades
+	MOV A,B    ; put decades in A
+	RLC
+	RLC
+	RLC
+	RLC        ; A = 16  x decades-->Decades at 4 MSB 
+	ADD C      ; A 
+	STA 3000H
+	RST 1
+	JMP START
+
+END

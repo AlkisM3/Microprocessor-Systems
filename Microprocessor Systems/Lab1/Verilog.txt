@@ -1,0 +1,156 @@
+Άσκηση5
+α)ΚΩΔΙΚΑΣ ΣΕ VERILOG
+// Write your modules here!
+module exc5a(A, B, C, D, E, F1, F2, F3, F4);
+output F1, F2, F3, F4;
+input A, B, C, D, E;
+wire Anot, Bnot, Cnot, Dnot, w1, w2, w3, w4;
+not
+
+(Anot, A),
+(Bnot, B),
+(Cnot, C),
+(Dnot, D);
+and(w1, B, C);
+
+or(w2, w1, D);
+and(w3, w2, A);
+and(w4, Bnot, Cnot, D);
+or(F1, w3, w4);
+
+wire m0, m2, m3, m5, m7, m8, m10, m11, m14, m15;
+and
+(m0, Anot, Bnot, Cnot, Dnot),
+(m2, Anot, Bnot, C, Dnot),
+(m3, Anot, Bnot, C, D),
+(m5, Anot, B, Cnot, D),
+(m7, Anot, B, C, D),
+(m9, A, Bnot, Cnot, D),
+(m10, A, Bnot, C, Dnot),
+(m11, A, Bnot, C, D),
+(m13, A, B, Cnot, D),
+(m14, A, B, C, Dnot);
+or(F2, m0, m2, m3, m5, m7, m9, m10, m11, m13, m14);
+
+wire w5, w6, w7, w8, w9;
+and(w5, A, B, C);
+and(w6, A, D);
+and(w7, B,C,D);
+and(w8, B, D, E);
+and(w9, C, D, E);
+or(F3, w5 ,w6 , w7, w8, w9);
+
+wire ww9, w10, w11, w12;
+and(ww9, C, D);
+or(w10, ww9, B, E);
+and(w11, w10, A);
+and(w12,B, C, D, E);
+or(F4, w11, w12);
+endmodule
+
+β)ΚΩΔΙΚΑΣ ΣΕ VERILOG
+// Write your modules here!
+module exc5b(A, B, C, D, E, F1, F2, F3, F4);
+output F1, F2, F3, F4;
+input A, B, C, D, E;
+assign
+  F1 = (A&((B&C)|D))|(~B&~C&D),
+  F2 = (~A&~B&~C&~D)|(~A&~B&C&~D)|(~A&~B&C&D)|(~A&B&~C&D)|(~A&B&C&D)|(A&~B&~C&D)|(A&~B&C&~D)|(A&~B&C&D)|(A&B&~C&D) |(A&B&C&~D),
+  F3 = (A&B&C)|((B|C)&D&E)|((A|(B&C))&D),
+  F4 = (A&((C&D)|B|E))|(B&C&D&E);
+
+endmodule
+
+//BΓΑΙΝΟΥΝ ΟΛΟΣΩΣΤΑ ΕΝΑ ΠΡΟΣ ΕΝΑ
+
+Άσκηση6
+Α)Είναι κυκλώματα ,έχουν υλοποιηθεί σε logisim και online ήδη
+Β)ΚΩΔΙΚΑΣ ΣΕ VERILOG
+// Write your modules here!
+module half_adder(output S, C, input x, y);
+xor(S, x, y);
+and(C, x, y);
+endmodule
+
+module full_adder(output S, C, input x, y, z);
+wire S1, C1, C2;
+half_adder
+HA1(S1, C1, x, y),
+HA2(S, C2, S1, z);
+or G1(C, C2, C1);
+endmodule
+
+module bit_adder_subtractor(output [3: 0] Sum, output C4, input [3: 0] A, B, input C0);
+wire C1, C2, C3;
+wire [3: 0] M;
+xor
+(M[0], B[0], C0),
+(M[1], B[1], C0),
+(M[2], B[2], C0),
+(M[3], B[3], C0);
+full_adder
+FA0(Sum[0], C1, A[0], M[0], C0),
+FA1(Sum[1], C2, A[1], M[1], C1),
+FA2(Sum[2], C3, A[2], M[2], C2),
+FA3(Sum[3], C4, A[3], M[3], C3);
+
+endmodule
+
+Γ)ΚΩΔΙΚΑΣ ΣΕ VERILOG
+// Write your modules here!
+module half_adder1(output S, C, input x, y);
+xor(S, x, y);
+and(C, x, y);
+endmodule
+
+module full_adder1(output S, C, input x, y, z);
+wire S1, C1, C2;
+half_adder1
+HA1(S1, C1, x, y),
+HA2(S, C2, S1, z);
+or G1(C, C2, C1);
+endmodule
+
+module bit_adder_subtracto1r(output [3: 0] Sum, output C4, input [3: 0] A, B, input C0);
+assign {C4, Sum} = C0 ? (A+(~B)+1) : (A+B);
+endmodule
+
+Άσκηση7
+A)Ο ΚΩΔΙΚΑΣ ΣΕ VERILOG
+
+// Write your modules here!
+module Mealy(y, x, clock, reset);
+output y;
+input x, clock, reset;
+reg [1: 0] state;
+parameter a = 2'b00, b = 2'b01, c = 2'b10, d = 2'b11;
+always @ (posedge clock, negedge reset)
+  if (reset == 0) state <= a;
+else case (state)
+  a: if (~x) state <= d; else state <= a;
+  b: if (~x) state <= c; else state <= a;
+  c: if (~x) state <= d; else state <= b;
+  d: if (~x) state <= c; else state <= d;
+endcase
+  assign y = (state[1] & ~state[0] & ~x)|(state[1] & state[0] & x)|(~state[1] &
+~x);
+endmodule
+
+β)Ο ΚΩΔΙΚΑΣ ΣΕ VERILOG
+// Write your modules here!
+module Moore(y, x, clock, reset);
+output y;
+input x, clock, reset;
+reg [1: 0] state;
+parameter a = 2'b00, b = 2'b01, c = 2'b10, d = 2'b11;
+always @ (posedge clock, negedge reset)
+  if (reset == 0) state <= a;
+else case (state)
+  a: if (~x) state <= d; else state <= a;
+  b: if (~x) state <= c; else state <= a;
+  c: if (~x) state <= b; else state <= d;
+  d: if (~x) state <= c; else state <= d;
+endcase
+  assign y = (~state[1] & state[0]) | (state[1] & ~state[0]);
+
+endmodule
